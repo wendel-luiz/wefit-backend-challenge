@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts",
+    "build": "tsup",
     "prepare": "husky",
     "commitlint": "commitlint --edit"
   },
