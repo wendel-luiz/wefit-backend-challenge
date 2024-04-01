@@ -1,13 +1,13 @@
-import express from "express";
+import express from "express"
 
-const app = express();
+const app = express()
 
-const port = process.env.PORT || 4568;
+const port = process.env.PORT || 4568
 
 app.get("/ping", (req, res) => {
-  return res.send("pong");
-});
+  return res.send("pong")
+})
 
 app.listen(port, () => {
-  console.log(`Escutando na porta ${port}`);
-});
+  console.log(`Escutando na sofrimento máximo ${port}`)
+})
