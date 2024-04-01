@@ -1,0 +1,20 @@
+{
+  "git": {
+    "requireBranch": "master",
+    "commitMessage": "chore release v${version}"
+  },
+  "hooks": {
+    "before:init": ["git pull", "yarn lint", "yarn test"],
+    "after:bump": "npx auto-changelog -p"
+  },
+  "github": {
+    "release": true
+  },
+  "npm": {
+    "skipChecks": true,
+    "publish": false
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  }
+}
