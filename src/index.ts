@@ -16,11 +16,17 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.get("/ping", (req, res) => {
-  return res.send("pong")
+app.get("/healthcheck", (_, res) => {
+  return res.status(200).send()
 })
 
-app.use("/person", personController.getRouter())
+app.use("/", personController.getRouter())
+
+app.get("*", function (_, res) {
+  res.status(404).json({
+    message: "Not found.",
+  })
+})
 
 app.use(errorHandler)
 

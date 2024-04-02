@@ -1,9 +1,9 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 export interface Paginated<Params> {
   page?: number
   take?: number
-  params: Params
+  params?: Params
 }
 
 export interface PaginatedResponse<Data> {

@@ -1,84 +1,69 @@
 import { randomUUID } from "crypto"
-import { CreatePerson } from "./dtos/create.dto"
 import { PersonRespository } from "./person.repository"
 import { NotFoundException } from "../../lib/exceptions"
-import { buildResponse, PersonResponse } from "./utils/build-response.util"
-import { UpdatePerson } from "./dtos/update-person.dto"
+import { personResponse, PersonResponse } from "./utils/build-response.util"
+import { UpdatePersonProps } from "./dtos/update-person.dto"
+import { CreatePersonProps } from "./dtos/create-person.dto"
+import {
+  GetManyPersonsProps,
+  GetManyPersonsResponse,
+} from "./dtos/get-many-person.dto"
+import { GetOnePersonProps } from "./dtos/get-one-person.dto"
+import { DeletePersonProps } from "./dtos/delete-person.dto"
 
 export class PersonService {
   constructor(private readonly personRepository: PersonRespository) {}
 
-  async create(props: CreatePerson): Promise<PersonResponse> {
-    const person = await this.personRepository.insertPerson({
+  async create(props: CreatePersonProps): Promise<PersonResponse> {
+    const person = await this.personRepository.insert({
+      ...props,
       uuid: randomUUID(),
-      name: props.name,
-      document: props.document,
-      personType: props.personType,
     })
 
-    const addresses = await this.personRepository.insertAddresses(
-      person.id,
-      props.addresses.map((address) => ({
-        personId: person.id,
-        number: address.number,
-        zip: address.zip,
-        publicArea: address.publicArea,
-        addOn: address.addOn,
-        district: address.district,
-        city: address.city,
-        state: address.state,
-      }))
-    )
-
-    const contacts = await this.personRepository.insertContacts(
-      person.id,
-      props.contacts.map((contact) => ({
-        personId: person.id,
-        contactType: contact.contactType,
-        value: contact.value,
-      }))
-    )
-
-    return buildResponse(person, addresses, contacts)
+    return personResponse(person)
   }
 
-  async getById(personId: string): Promise<PersonResponse> {
-    const person = await this.personRepository.findPersonByUuid(personId)
+  async getById(props: GetOnePersonProps): Promise<PersonResponse> {
+    const person = await this.personRepository.findByUuid(props.personId)
     if (!person) {
       throw new NotFoundException("Person not found.")
     }
 
-    const addresses = await this.personRepository.findAddressesByPersonId(
-      person.id
-    )
-
-    const contacts = await this.personRepository.findContactsByPersonId(
-      person.id
-    )
-
-    return buildResponse(person, addresses, contacts)
+    return personResponse(person)
   }
 
-  async deletePersonById(personId: string): Promise<void> {
-    const person = await this.personRepository.findPersonByUuid(personId)
+  async getMany(props: GetManyPersonsProps): Promise<GetManyPersonsResponse> {
+    const response = await this.personRepository.findMany(props)
+
+    return {
+      ...response,
+      items: response.items.map((person) => personResponse(person)),
+    }
+  }
+
+  async updatePerson({
+    personId,
+    ...updatePerson
+  }: UpdatePersonProps): Promise<PersonResponse> {
+    const person = await this.personRepository.findByUuid(personId)
+    if (!person) {
+      throw new NotFoundException("Person not found.")
+    }
+
+    const updatedPerson = await this.personRepository.update(
+      person.id,
+      updatePerson
+    )
+
+    return personResponse(updatedPerson)
+  }
+
+  async deletePersonById(props: DeletePersonProps): Promise<void> {
+    const person = await this.personRepository.findByUuid(props.personId)
     if (!person) {
       throw new NotFoundException("Person not found.")
     }
 
     await this.personRepository.deletePerson(person.id)
-  }
-
-  async updatePerson(
-    personId: string,
-    props: UpdatePerson
-  ): Promise<PersonResponse> {
-    const person = await this.personRepository.findPersonByUuid(personId)
-    if (!person) {
-      throw new NotFoundException("Person not found.")
-    }
-
-    await this.personRepository.updatePerson(person.id, props)
-
-    return this.getById(personId)
   }
 }

@@ -7,8 +7,6 @@ import {
 
 export interface Database {
   person: PersonTable
-  contact: ContactTable
-  address: AddressTable
 }
 
 export enum PersonType {
@@ -22,38 +20,9 @@ export interface PersonTable {
   name: string
   document: string
   personType: PersonType
-  createdAt: Generated<string>
-  updatedAt?: string
-  deletedAt?: string
-}
-
-export type Person = Selectable<PersonTable>
-export type NewPerson = Insertable<PersonTable>
-export type PersonUpdate = Updateable<PersonTable>
-
-export enum ContactType {
-  CELL_PHONE = "CELL_PHONE",
-  TELEPHONE = "TELEPHONE",
-  EMAIL = "EMAIL",
-}
-
-export interface ContactTable {
-  id: Generated<number>
-  personId: number
-  contactType: ContactType
-  value: string
-  createdAt: Generated<string>
-  updatedAt?: string
-  deletedAt?: string
-}
-
-export type Contact = Selectable<ContactTable>
-export type NewContact = Insertable<ContactTable>
-export type ContactUpdate = Updateable<ContactTable>
-
-export interface AddressTable {
-  id: Generated<number>
-  personId: number
+  cellPhone: string
+  telephone: string
+  email: string
   zip: string
   publicArea: string
   number: string
@@ -66,6 +35,6 @@ export interface AddressTable {
   deletedAt?: string
 }
 
-export type Address = Selectable<AddressTable>
-export type NewAddress = Insertable<AddressTable>
-export type AddressUpdate = Updateable<AddressTable>
+export type Person = Selectable<PersonTable>
+export type NewPerson = Insertable<PersonTable>
+export type PersonUpdate = Updateable<PersonTable>

@@ -1,8 +1,10 @@
 import express, { Router } from "express"
 import { PersonHandler } from "./person.handler"
-import { createPersonBodySchema } from "./dtos/create.dto"
+import { createPersonBodySchema } from "./dtos/create-person.dto"
 import { bodyParser } from "../../middleware/body-parser"
 import { updatePersonBodySchema } from "./dtos/update-person.dto"
+import { queryParser } from "../../middleware/query-parser"
+import { getManyPersonsQuerySchema } from "./dtos/get-many-person.dto"
 
 export class PersonController {
   private readonly router: Router
@@ -14,6 +16,12 @@ export class PersonController {
       "/",
       bodyParser(createPersonBodySchema),
       this.handler.createPerson
+    )
+
+    this.router.get(
+      "/all",
+      queryParser(getManyPersonsQuerySchema),
+      this.handler.getManyPersons
     )
 
     this.router.get("/:personId", this.handler.getPersonById)

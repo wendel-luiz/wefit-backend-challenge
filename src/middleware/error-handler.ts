@@ -17,7 +17,7 @@ export function errorHandler(
   }
 
   if (err instanceof z.ZodError) {
-    return res.status(403).json({
+    return res.status(400).json({
       message:
         process.env.NODE_ENV !== "prod"
           ? fromZodError(err).toString()
