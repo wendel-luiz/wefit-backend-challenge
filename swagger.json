@@ -1,0 +1,646 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WeFit Backend Challenge",
+    "description": "Código desenvolvido para a vaga de Desenvolvedor Backend na WeFit",
+    "contact": {
+      "name": "Wendel Luiz S. Aragão",
+      "email": "wendel.luiz.profissional@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "description": "Criação de uma pessoa",
+        "requestBody": {
+          "description": "Dados necessários para se criar uma pessoa",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePerson"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cadastro realizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação do body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao cadastrar uma pessoa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{personId}": {
+      "get": {
+        "description": "Leitura dos dados de uma única pessoa",
+        "parameters": [
+          {
+            "description": "ID da pessoa",
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "example": "bd889c0b-8326-441e-847f-3581a3116b92"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pessoa Encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pessoa não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao procurar uma pessoa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Edição de uma pessoa. Todos os campos são opcionais",
+        "parameters": [
+          {
+            "description": "ID da pessoa",
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "example": "bd889c0b-8326-441e-847f-3581a3116b92"
+          }
+        ],
+        "requestBody": {
+          "description": "Dados passíveis de serem modificados",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePerson"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pessoa atualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação do body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao atualizar uma pessoa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deleção de uma pessoa",
+        "parameters": [
+          {
+            "description": "ID da pessoa",
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "example": "bd889c0b-8326-441e-847f-3581a3116b92"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pessoa deletada"
+          },
+          "400": {
+            "description": "Erro de validação do body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pessoa não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao excluir uma pessoa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/all": {
+      "get": {
+        "description": "Leitura paginada de todas as pessoas",
+        "parameters": [
+          {
+            "description": "Qual a página da leitura",
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "example": "1"
+          },
+          {
+            "description": "Quantos registros retornar por página",
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "example": "10"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pessoas retornada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllPersonsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao procurar uma pessoa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "ID da pessoa",
+            "example": "Person not found."
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "ID da pessoa",
+            "example": "Validation error."
+          }
+        }
+      },
+      "InternalServerError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "ID da pessoa",
+            "example": "Internal Server Error."
+          }
+        }
+      },
+      "PersonResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID da pessoa",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome da pessoa",
+            "example": "João"
+          },
+          "document": {
+            "type": "string",
+            "description": "Documento da pessoa. Se for PJ um CNPJ, se for PF um CPF",
+            "example": "044.553.690-07"
+          },
+          "personType": {
+            "type": "string",
+            "description": "Tipo da pessoa: NATURAL = PF, LEGAL = PJ",
+            "enum": ["NATURAL", "LEGAL"],
+            "example": "NATURAL"
+          },
+          "zip": {
+            "type": "string",
+            "description": "CEP residencial",
+            "example": "37048-280"
+          },
+          "publicArea": {
+            "type": "string",
+            "description": "Logradouro ou Rua",
+            "example": "Rua Francisco da Silva Paiva"
+          },
+          "number": {
+            "type": "string",
+            "description": "Número da residência",
+            "example": "1099"
+          },
+          "addOn": {
+            "type": "string",
+            "description": "Complemento",
+            "example": "Mercado próximo"
+          },
+          "district": {
+            "type": "string",
+            "description": "Bairro",
+            "example": "Jardim Sion"
+          },
+          "city": {
+            "type": "string",
+            "description": "Cidade",
+            "example": "Varginha"
+          },
+          "state": {
+            "type": "string",
+            "description": "Estado",
+            "example": "MG"
+          },
+          "cellPhone": {
+            "type": "string",
+            "description": "Telefone Celular",
+            "example": "(37) 3301-3783"
+          },
+          "telephone": {
+            "type": "string",
+            "description": "Telefone Fixo",
+            "example": "(31) 3328-7262"
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail",
+            "example": "joao@email.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Data de criação da pessoa",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatePerson": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome da pessoa",
+            "example": "João",
+            "required": true
+          },
+          "document": {
+            "type": "string",
+            "description": "Documento da pessoa. Se for PJ um CNPJ, se for PF um CPF",
+            "example": "044.553.690-07",
+            "required": true
+          },
+          "personType": {
+            "type": "string",
+            "description": "Tipo da pessoa: NATURAL = PF, LEGAL = PJ",
+            "enum": ["NATURAL", "LEGAL"],
+            "example": "NATURAL",
+            "required": true
+          },
+          "zip": {
+            "type": "string",
+            "description": "CEP residencial",
+            "example": "37048-280",
+            "required": true
+          },
+          "publicArea": {
+            "type": "string",
+            "description": "Logradouro ou Rua",
+            "example": "Rua Francisco da Silva Paiva",
+            "required": true
+          },
+          "number": {
+            "type": "string",
+            "description": "Número da residência",
+            "example": "1099",
+            "required": true
+          },
+          "addOn": {
+            "type": "string",
+            "description": "Complemento",
+            "example": "Mercado próximo",
+            "required": false
+          },
+          "district": {
+            "type": "string",
+            "description": "Bairro",
+            "example": "Jardim Sion",
+            "required": true
+          },
+          "city": {
+            "type": "string",
+            "description": "Cidade",
+            "example": "Varginha",
+            "required": true
+          },
+          "state": {
+            "type": "string",
+            "description": "Estado",
+            "example": "MG",
+            "required": true
+          },
+          "cellPhone": {
+            "type": "string",
+            "description": "Telefone Celular",
+            "example": "(37) 3301-3783",
+            "required": true
+          },
+          "telephone": {
+            "type": "string",
+            "description": "Telefone Fixo",
+            "example": "(31) 3328-7262",
+            "required": true
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail",
+            "example": "joao@email.com",
+            "required": true
+          }
+        }
+      },
+      "UpdatePerson": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome da pessoa",
+            "example": "João",
+            "required": false
+          },
+          "document": {
+            "type": "string",
+            "description": "Documento da pessoa. Se for PJ um CNPJ, se for PF um CPF",
+            "example": "044.553.690-07",
+            "required": false
+          },
+          "personType": {
+            "type": "string",
+            "description": "Tipo da pessoa: NATURAL = PF, LEGAL = PJ",
+            "enum": ["NATURAL", "LEGAL"],
+            "example": "NATURAL",
+            "required": false
+          },
+          "zip": {
+            "type": "string",
+            "description": "CEP residencial",
+            "example": "37048-280",
+            "required": false
+          },
+          "publicArea": {
+            "type": "string",
+            "description": "Logradouro ou Rua",
+            "example": "Rua Francisco da Silva Paiva",
+            "required": false
+          },
+          "number": {
+            "type": "string",
+            "description": "Número da residência",
+            "example": "1099",
+            "required": false
+          },
+          "addOn": {
+            "type": "string",
+            "description": "Complemento",
+            "example": "Mercado próximo",
+            "required": false
+          },
+          "district": {
+            "type": "string",
+            "description": "Bairro",
+            "example": "Jardim Sion",
+            "required": false
+          },
+          "city": {
+            "type": "string",
+            "description": "Cidade",
+            "example": "Varginha",
+            "required": false
+          },
+          "state": {
+            "type": "string",
+            "description": "Estado",
+            "example": "MG",
+            "required": false
+          },
+          "cellPhone": {
+            "type": "string",
+            "description": "Telefone Celular",
+            "example": "(37) 3301-3783",
+            "required": false
+          },
+          "telephone": {
+            "type": "string",
+            "description": "Telefone Fixo",
+            "example": "(31) 3328-7262",
+            "required": false
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail",
+            "example": "joao@email.com",
+            "required": false
+          }
+        }
+      },
+      "AllPersonsResponse": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "description": "Página atual",
+            "example": 1
+          },
+          "pages": {
+            "type": "number",
+            "description": "Total de páginas",
+            "example": 1
+          },
+          "length": {
+            "type": "number",
+            "description": "Total de registros nesta página",
+            "example": 1
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID da pessoa",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Nome da pessoa",
+                  "example": "João"
+                },
+                "document": {
+                  "type": "string",
+                  "description": "Documento da pessoa. Se for PJ um CNPJ, se for PF um CPF",
+                  "example": "044.553.690-07"
+                },
+                "personType": {
+                  "type": "string",
+                  "description": "Tipo da pessoa: NATURAL = PF, LEGAL = PJ",
+                  "enum": ["NATURAL", "LEGAL"],
+                  "example": "NATURAL"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "CEP residencial",
+                  "example": "37048-280"
+                },
+                "publicArea": {
+                  "type": "string",
+                  "description": "Logradouro ou Rua",
+                  "example": "Rua Francisco da Silva Paiva"
+                },
+                "number": {
+                  "type": "string",
+                  "description": "Número da residência",
+                  "example": "1099"
+                },
+                "addOn": {
+                  "type": "string",
+                  "description": "Complemento",
+                  "example": "Mercado próximo"
+                },
+                "district": {
+                  "type": "string",
+                  "description": "Bairro",
+                  "example": "Jardim Sion"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Cidade",
+                  "example": "Varginha"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Estado",
+                  "example": "MG"
+                },
+                "cellPhone": {
+                  "type": "string",
+                  "description": "Telefone Celular",
+                  "example": "(37) 3301-3783"
+                },
+                "telephone": {
+                  "type": "string",
+                  "description": "Telefone Fixo",
+                  "example": "(31) 3328-7262"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "E-mail",
+                  "example": "joao@email.com"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Data de criação da pessoa",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

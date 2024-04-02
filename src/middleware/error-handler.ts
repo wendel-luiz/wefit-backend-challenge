@@ -21,7 +21,7 @@ export function errorHandler(
       message:
         process.env.NODE_ENV !== "prod"
           ? fromZodError(err).toString()
-          : "Validation error",
+          : "Validation error.",
     })
   }
 
