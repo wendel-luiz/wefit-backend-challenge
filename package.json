@@ -16,7 +16,9 @@
     "release": "release-it"
   },
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "kysely": "^0.27.3",
+    "mysql2": "^3.9.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.2.1",
