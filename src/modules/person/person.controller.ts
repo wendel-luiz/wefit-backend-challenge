@@ -14,6 +14,8 @@ export class PersonController {
       bodyParser(createPersonBodySchema),
       this.handler.createPerson
     )
+
+    this.router.get("/:personId", this.handler.getPersonById)
   }
 
   public getRouter(): Router {

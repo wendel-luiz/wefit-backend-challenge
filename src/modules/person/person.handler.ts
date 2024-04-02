@@ -1,6 +1,7 @@
 import { RequestHandler } from "express"
 import { PersonService } from "./person.service"
 import { CreatePerson } from "./dtos/create.dto"
+import { GetOneParams } from "./dtos/get-one"
 
 export class PersonHandler {
   constructor(private readonly service: PersonService) {}
@@ -17,4 +18,16 @@ export class PersonHandler {
         )
         .catch((err) => next(err))
     }
+
+  public getPersonById: RequestHandler<
+    GetOneParams,
+    unknown,
+    unknown,
+    unknown
+  > = (req, res, next) => {
+    this.service
+      .getById(req.params.personId)
+      .then((result) => res.status(200).json(result))
+      .catch((err) => next(err))
+  }
 }

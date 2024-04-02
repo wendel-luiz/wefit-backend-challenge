@@ -1,11 +1,13 @@
 import { randomUUID } from "crypto"
-import { CreatePerson, CreatePersonResult } from "./dtos/create.dto"
+import { CreatePerson } from "./dtos/create.dto"
 import { PersonRespository } from "./person.repository"
+import { NotFoundException } from "../../lib/exceptions"
+import { buildResponse, PersonResponse } from "./utils/build-response.util"
 
 export class PersonService {
   constructor(private readonly personRepository: PersonRespository) {}
 
-  async create(props: CreatePerson): Promise<CreatePersonResult> {
+  async create(props: CreatePerson): Promise<PersonResponse> {
     const person = await this.personRepository.insertPerson({
       uuid: randomUUID(),
       name: props.name,
@@ -36,24 +38,23 @@ export class PersonService {
       }))
     )
 
-    return {
-      id: person.uuid,
-      name: person.name,
-      personType: person.personType,
-      document: person.document,
-      contacts: contacts.map((contact) => ({
-        contactType: contact.contactType,
-        value: contact.value,
-      })),
-      addresses: addresses.map((address) => ({
-        zip: address.zip,
-        publicArea: address.publicArea,
-        number: address.number,
-        addOn: address.addOn,
-        district: address.district,
-        city: address.city,
-        state: address.state,
-      })),
+    return buildResponse(person, addresses, contacts)
+  }
+
+  async getById(personId: string): Promise<PersonResponse> {
+    const person = await this.personRepository.findPersonByUuid(personId)
+    if (!person) {
+      throw new NotFoundException("Person not found.")
     }
+
+    const addresses = await this.personRepository.findAddressesByPersonId(
+      person.id
+    )
+
+    const contacts = await this.personRepository.findContactsByPersonId(
+      person.id
+    )
+
+    return buildResponse(person, addresses, contacts)
   }
 }

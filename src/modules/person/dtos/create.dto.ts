@@ -26,23 +26,3 @@ export const createPersonBodySchema = z.object({
     .min(1),
 })
 export type CreatePerson = z.infer<typeof createPersonBodySchema>
-
-export type CreatePersonResult = {
-  id: string
-  name: string
-  document: string
-  personType: PersonType
-  addresses: Array<{
-    zip: string
-    publicArea: string
-    number: string
-    addOn: string
-    district: string
-    city: string
-    state: string
-  }>
-  contacts: Array<{
-    contactType: ContactType
-    value: string
-  }>
-}

@@ -8,7 +8,6 @@ import {
   NewPerson,
   Person,
 } from "../../database/types"
-import { InsertPerson } from "./person.types"
 
 export class PersonRespository {
   constructor(private readonly connection: Kysely<Database>) {}
@@ -24,13 +23,15 @@ export class PersonRespository {
       })
       .executeTakeFirstOrThrow()
 
-    const person = await this.connection
+    return await this.findPersonByUuid(newPerson.uuid)
+  }
+
+  async findPersonByUuid(uuid: string): Promise<Person> {
+    return await this.connection
       .selectFrom("person")
       .selectAll()
-      .where("person.uuid", "=", newPerson.uuid)
+      .where("person.uuid", "=", uuid)
       .executeTakeFirstOrThrow()
-
-    return person
   }
 
   async insertAddresses(
@@ -39,13 +40,15 @@ export class PersonRespository {
   ): Promise<Array<Address>> {
     await this.connection.insertInto("address").values(newAddresses).execute()
 
-    const addresses = await this.connection
+    return await this.findAddressesByPersonId(personId)
+  }
+
+  async findAddressesByPersonId(personId: number): Promise<Address[]> {
+    return await this.connection
       .selectFrom("address")
       .selectAll()
       .where("address.personId", "=", personId)
       .execute()
-
-    return addresses
   }
 
   async insertContacts(
@@ -54,12 +57,14 @@ export class PersonRespository {
   ): Promise<Array<Contact>> {
     await this.connection.insertInto("contact").values(newContacts).execute()
 
-    const contacts = await this.connection
+    return await this.findContactsByPersonId(personId)
+  }
+
+  async findContactsByPersonId(personId: number): Promise<Contact[]> {
+    return await this.connection
       .selectFrom("contact")
       .selectAll()
       .where("contact.personId", "=", personId)
       .execute()
-
-    return contacts
   }
 }
