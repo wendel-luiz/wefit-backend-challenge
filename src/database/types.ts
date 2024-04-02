@@ -23,8 +23,8 @@ export interface PersonTable {
   document: string
   personType: PersonType
   createdAt: Generated<string>
-  updatedAt: string
-  deletedAt: string
+  updatedAt?: string
+  deletedAt?: string
 }
 
 export type Person = Selectable<PersonTable>
@@ -43,8 +43,8 @@ export interface ContactTable {
   contactType: ContactType
   value: string
   createdAt: Generated<string>
-  updatedAt: string
-  deletedAt: string
+  updatedAt?: string
+  deletedAt?: string
 }
 
 export type Contact = Selectable<ContactTable>
@@ -62,8 +62,8 @@ export interface AddressTable {
   city: string
   state: string
   createdAt: Generated<string>
-  updatedAt: string
-  deletedAt: string
+  updatedAt?: string
+  deletedAt?: string
 }
 
 export type Address = Selectable<AddressTable>

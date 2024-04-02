@@ -23,7 +23,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./dist:/home/app/dist
+      - .:/home/app
     command: "yarn start:dev"
     depends_on:
       - mysqldb
