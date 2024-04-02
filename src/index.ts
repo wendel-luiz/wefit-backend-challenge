@@ -8,7 +8,7 @@ import swaggerDocument from "../swagger.json"
 
 const app = express()
 
-if (Boolean(process.env.FLAG_MIGRATE) === true) {
+if (process.env.FLAG_MIGRAT === "true") {
   migrateToLatest()
 }
 
