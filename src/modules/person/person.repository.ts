@@ -7,7 +7,9 @@ import {
   NewContact,
   NewPerson,
   Person,
+  PersonUpdate,
 } from "../../database/types"
+import { InternalServerError } from "../../lib/exceptions"
 
 export class PersonRespository {
   constructor(private readonly connection: Kysely<Database>) {}
@@ -23,14 +25,31 @@ export class PersonRespository {
       })
       .executeTakeFirstOrThrow()
 
-    return await this.findPersonByUuid(newPerson.uuid)
+    const person = await this.findPersonByUuid(newPerson.uuid)
+
+    if (!person) {
+      throw new InternalServerError()
+    }
+
+    return person
   }
 
-  async findPersonByUuid(uuid: string): Promise<Person> {
+  async findPersonByUuid(uuid: string): Promise<Person | undefined> {
     return await this.connection
       .selectFrom("person")
       .selectAll()
       .where("person.uuid", "=", uuid)
+      .executeTakeFirst()
+  }
+
+  async updatePerson(
+    personId: number,
+    updatePerson: PersonUpdate
+  ): Promise<void> {
+    await this.connection
+      .updateTable("person")
+      .set(updatePerson)
+      .where("person.id", "=", personId)
       .executeTakeFirstOrThrow()
   }
 
@@ -66,5 +85,12 @@ export class PersonRespository {
       .selectAll()
       .where("contact.personId", "=", personId)
       .execute()
+  }
+
+  async deletePerson(personId: number): Promise<void> {
+    await this.connection
+      .deleteFrom("person")
+      .where("person.id", "=", personId)
+      .executeTakeFirstOrThrow()
   }
 }

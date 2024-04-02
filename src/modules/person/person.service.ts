@@ -3,6 +3,7 @@ import { CreatePerson } from "./dtos/create.dto"
 import { PersonRespository } from "./person.repository"
 import { NotFoundException } from "../../lib/exceptions"
 import { buildResponse, PersonResponse } from "./utils/build-response.util"
+import { UpdatePerson } from "./dtos/update-person.dto"
 
 export class PersonService {
   constructor(private readonly personRepository: PersonRespository) {}
@@ -56,5 +57,28 @@ export class PersonService {
     )
 
     return buildResponse(person, addresses, contacts)
+  }
+
+  async deletePersonById(personId: string): Promise<void> {
+    const person = await this.personRepository.findPersonByUuid(personId)
+    if (!person) {
+      throw new NotFoundException("Person not found.")
+    }
+
+    await this.personRepository.deletePerson(person.id)
+  }
+
+  async updatePerson(
+    personId: string,
+    props: UpdatePerson
+  ): Promise<PersonResponse> {
+    const person = await this.personRepository.findPersonByUuid(personId)
+    if (!person) {
+      throw new NotFoundException("Person not found.")
+    }
+
+    await this.personRepository.updatePerson(person.id, props)
+
+    return this.getById(personId)
   }
 }

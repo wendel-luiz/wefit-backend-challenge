@@ -9,7 +9,13 @@ export class Exception extends Error {
 
 export class InvalidEnvFileException extends Exception {
   constructor() {
-    super('Invalid env file', 500)
+    super("Invalid env file", 500)
+  }
+}
+
+export class InternalServerError extends Exception {
+  constructor() {
+    super("Internal Server Error.", 500)
   }
 }
 

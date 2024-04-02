@@ -2,6 +2,7 @@ import express, { Router } from "express"
 import { PersonHandler } from "./person.handler"
 import { createPersonBodySchema } from "./dtos/create.dto"
 import { bodyParser } from "../../middleware/body-parser"
+import { updatePersonBodySchema } from "./dtos/update-person.dto"
 
 export class PersonController {
   private readonly router: Router
@@ -16,6 +17,14 @@ export class PersonController {
     )
 
     this.router.get("/:personId", this.handler.getPersonById)
+
+    this.router.delete("/:personId", this.handler.deletePersonById)
+
+    this.router.patch(
+      "/:personId",
+      bodyParser(updatePersonBodySchema),
+      this.handler.updatePersonById
+    )
   }
 
   public getRouter(): Router {
