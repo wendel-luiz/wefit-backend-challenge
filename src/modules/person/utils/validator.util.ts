@@ -1,9 +1,9 @@
 import z from "zod"
+import { onlyNumbers } from "./string.util"
 import { PersonType } from "../../../database/types"
-import { onlyNumbers } from "../utils/string.util"
 import { cnpj, cpf } from "cpf-cnpj-validator"
 
-export const createPersonBodySchema = z
+export const personSchema = z
   .object({
     name: z.string().max(255),
     document: z.string().transform((doc) => onlyNumbers(doc)),
@@ -39,6 +39,3 @@ export const createPersonBodySchema = z
         return cpf.isValid(schema.document)
     }
   }, 'Invalid document at "document" ')
-export type CreatePersonBody = z.infer<typeof createPersonBodySchema>
-
-export type CreatePersonProps = CreatePersonBody

@@ -14,7 +14,7 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .addColumn("zip", "varchar(255)", (col) => col.notNull())
     .addColumn("publicArea", "varchar(255)", (col) => col.notNull())
     .addColumn("number", "varchar(255)", (col) => col.notNull())
-    .addColumn("addOn", "varchar(255)", (col) => col.notNull())
+    .addColumn("addOn", "varchar(255)")
     .addColumn("district", "varchar(255)", (col) => col.notNull())
     .addColumn("city", "varchar(255)", (col) => col.notNull())
     .addColumn("state", "varchar(255)", (col) => col.notNull())
