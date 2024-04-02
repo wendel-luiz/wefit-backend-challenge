@@ -5,17 +5,17 @@ export async function up(db: Kysely<Database>): Promise<void> {
   await db.schema
     .createTable("person")
     .addColumn("id", "serial", (col) => col.primaryKey())
-    .addColumn("uuid", "text", (col) => col.notNull().unique())
-    .addColumn("name", "text", (col) => col.notNull())
-    .addColumn("document", "text", (col) => col.notNull())
-    .addColumn("personType", "text", (col) => col.notNull())
-    .addColumn("createdAt", "timestamptz", (col) =>
+    .addColumn("uuid", "varchar(255)", (col) => col.notNull().unique())
+    .addColumn("name", "varchar(255)", (col) => col.notNull())
+    .addColumn("document", "varchar(255)", (col) => col.notNull())
+    .addColumn("personType", "varchar(255)", (col) => col.notNull())
+    .addColumn("createdAt", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull()
     )
-    .addColumn("updatedAt", "timestamptz", (col) =>
+    .addColumn("updatedAt", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull()
     )
-    .addColumn("deletedAt", "timestamptz")
+    .addColumn("deletedAt", "timestamp")
     .execute()
 
   await db.schema
@@ -30,16 +30,16 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .addColumn("personId", "integer", (col) =>
       col.references("person.id").onDelete("cascade").notNull()
     )
-    .addColumn("contactType", "text", (col) => col.notNull())
-    .addColumn("value", "text", (col) => col.notNull())
-    .addColumn("password", "text", (col) => col.notNull())
-    .addColumn("createdAt", "timestamptz", (col) =>
+    .addColumn("contactType", "varchar(255)", (col) => col.notNull())
+    .addColumn("value", "varchar(255)", (col) => col.notNull())
+    .addColumn("password", "varchar(255)", (col) => col.notNull())
+    .addColumn("createdAt", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull()
     )
-    .addColumn("updatedAt", "timestamptz", (col) =>
+    .addColumn("updatedAt", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull()
     )
-    .addColumn("deletedAt", "timestamptz")
+    .addColumn("deletedAt", "timestamp")
     .execute()
 
   await db.schema
@@ -54,20 +54,20 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .addColumn("personId", "integer", (col) =>
       col.references("person.id").onDelete("cascade").notNull()
     )
-    .addColumn("zip", "text", (col) => col.notNull())
-    .addColumn("publicArea", "text", (col) => col.notNull())
-    .addColumn("number", "text", (col) => col.notNull())
-    .addColumn("addOn", "text", (col) => col.notNull())
-    .addColumn("district", "text", (col) => col.notNull())
-    .addColumn("city", "text", (col) => col.notNull())
-    .addColumn("state", "text", (col) => col.notNull())
-    .addColumn("createdAt", "timestamptz", (col) =>
+    .addColumn("zip", "varchar(255)", (col) => col.notNull())
+    .addColumn("publicArea", "varchar(255)", (col) => col.notNull())
+    .addColumn("number", "varchar(255)", (col) => col.notNull())
+    .addColumn("addOn", "varchar(255)", (col) => col.notNull())
+    .addColumn("district", "varchar(255)", (col) => col.notNull())
+    .addColumn("city", "varchar(255)", (col) => col.notNull())
+    .addColumn("state", "varchar(255)", (col) => col.notNull())
+    .addColumn("createdAt", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull()
     )
-    .addColumn("updatedAt", "timestamptz", (col) =>
+    .addColumn("updatedAt", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull()
     )
-    .addColumn("deletedAt", "timestamptz")
+    .addColumn("deletedAt", "timestamp")
     .execute()
 
   await db.schema

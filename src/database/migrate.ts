@@ -4,11 +4,13 @@ import { promises as fs } from "fs"
 import { Kysely, Migrator, MysqlDialect, FileMigrationProvider } from "kysely"
 import { type Database } from "./types"
 
-async function migrateToLatest(): Promise<void> {
+export async function migrateToLatest(): Promise<void> {
   const db = new Kysely<Database>({
     dialect: new MysqlDialect({
       pool: createPool({
         database: process.env.MYSQLDB_DATABASE,
+        user: process.env.MYSQLDB_USER,
+        password: process.env.MYSQLDB_PASSWORD,
         host: process.env.MYSQLDB_HOST,
       }),
     }),
@@ -19,7 +21,7 @@ async function migrateToLatest(): Promise<void> {
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: path.join(__dirname, "migrations"),
+      migrationFolder: path.join(__dirname, "database", "migrations"),
     }),
   })
 
@@ -41,5 +43,3 @@ async function migrateToLatest(): Promise<void> {
 
   await db.destroy()
 }
-
-void migrateToLatest()
