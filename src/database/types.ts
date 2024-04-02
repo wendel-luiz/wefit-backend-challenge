@@ -21,7 +21,7 @@ export interface PersonTable {
   uuid: string
   name: string
   document: string
-  type: PersonType
+  personType: PersonType
   createdAt: Generated<string>
   updatedAt: string
   deletedAt: string
