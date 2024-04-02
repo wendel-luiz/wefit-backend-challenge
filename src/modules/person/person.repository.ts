@@ -1,73 +1,65 @@
 import { Kysely } from "kysely"
-import { Address, Contact, Database, Person } from "../../database/types"
+import {
+  Address,
+  Contact,
+  Database,
+  NewAddress,
+  NewContact,
+  NewPerson,
+  Person,
+} from "../../database/types"
 import { InsertPerson } from "./person.types"
 
 export class PersonRespository {
   constructor(private readonly connection: Kysely<Database>) {}
 
-  async insert(newPerson: InsertPerson): Promise<{
-    person: Person
-    addresses: Address[]
-    contacts: Contact[]
-  }> {
-    const [person, addresses, contacts] = await this.connection
-      .transaction()
-      .execute(async (tx) => {
-        await tx
-          .insertInto("person")
-          .values({
-            uuid: newPerson.uuid,
-            name: newPerson.name,
-            document: newPerson.document,
-            personType: newPerson.personType,
-          })
-          .executeTakeFirstOrThrow()
-
-        const person = await tx
-          .selectFrom("person")
-          .selectAll()
-          .where("person.uuid", "=", newPerson.uuid)
-          .executeTakeFirstOrThrow()
-
-        await tx
-          .insertInto("address")
-          .values(
-            newPerson.addresses.map((address) => ({
-              ...address,
-              personId: person.id,
-            }))
-          )
-          .execute()
-
-        const addresses = await tx
-          .selectFrom("address")
-          .selectAll()
-          .where("address.personId", "=", person.id)
-          .execute()
-
-        await tx
-          .insertInto("contact")
-          .values(
-            newPerson.contacts.map((contact) => ({
-              ...contact,
-              personId: person.id,
-            }))
-          )
-          .execute()
-
-        const contacts = await tx
-          .selectFrom("contact")
-          .selectAll()
-          .where("contact.personId", "=", person.id)
-          .execute()
-
-        return [person, addresses, contacts]
+  async insertPerson(newPerson: NewPerson): Promise<Person> {
+    await this.connection
+      .insertInto("person")
+      .values({
+        uuid: newPerson.uuid,
+        name: newPerson.name,
+        document: newPerson.document,
+        personType: newPerson.personType,
       })
+      .executeTakeFirstOrThrow()
 
-    return {
-      person,
-      addresses,
-      contacts,
-    }
+    const person = await this.connection
+      .selectFrom("person")
+      .selectAll()
+      .where("person.uuid", "=", newPerson.uuid)
+      .executeTakeFirstOrThrow()
+
+    return person
+  }
+
+  async insertAddresses(
+    personId: number,
+    newAddresses: NewAddress[]
+  ): Promise<Array<Address>> {
+    await this.connection.insertInto("address").values(newAddresses).execute()
+
+    const addresses = await this.connection
+      .selectFrom("address")
+      .selectAll()
+      .where("address.personId", "=", personId)
+      .execute()
+
+    return addresses
+  }
+
+  async insertContacts(
+    personId: number,
+    newContacts: NewContact[]
+  ): Promise<Array<Contact>> {
+    await this.connection.insertInto("contact").values(newContacts).execute()
+
+    const contacts = await this.connection
+      .selectFrom("contact")
+      .selectAll()
+      .where("contact.personId", "=", personId)
+      .execute()
+
+    return contacts
   }
 }

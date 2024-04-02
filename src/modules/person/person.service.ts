@@ -6,25 +6,46 @@ export class PersonService {
   constructor(private readonly personRepository: PersonRespository) {}
 
   async create(props: CreatePerson): Promise<CreatePersonResult> {
-    const result = await this.personRepository.insert({
+    const person = await this.personRepository.insertPerson({
       uuid: randomUUID(),
       name: props.name,
       document: props.document,
       personType: props.personType,
-      addresses: props.addresses,
-      contacts: props.contacts,
     })
 
+    const addresses = await this.personRepository.insertAddresses(
+      person.id,
+      props.addresses.map((address) => ({
+        personId: person.id,
+        number: address.number,
+        zip: address.zip,
+        publicArea: address.publicArea,
+        addOn: address.addOn,
+        district: address.district,
+        city: address.city,
+        state: address.state,
+      }))
+    )
+
+    const contacts = await this.personRepository.insertContacts(
+      person.id,
+      props.contacts.map((contact) => ({
+        personId: person.id,
+        contactType: contact.contactType,
+        value: contact.value,
+      }))
+    )
+
     return {
-      id: result.person.uuid,
-      name: result.person.name,
-      personType: result.person.personType,
-      document: result.person.document,
-      contacts: result.contacts.map((contact) => ({
+      id: person.uuid,
+      name: person.name,
+      personType: person.personType,
+      document: person.document,
+      contacts: contacts.map((contact) => ({
         contactType: contact.contactType,
         value: contact.value,
       })),
-      addresses: result.addresses.map((address) => ({
+      addresses: addresses.map((address) => ({
         zip: address.zip,
         publicArea: address.publicArea,
         number: address.number,
