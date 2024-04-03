@@ -13,7 +13,7 @@ export interface PersonResponse {
   zip: string
   publicArea: string
   number: string
-  addOn: string
+  addOn?: string
   district: string
   city: string
   state: string
