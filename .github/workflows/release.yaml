@@ -8,5 +8,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Install the dependencies
         run: yarn install --frozen-lockfile
-      - name: End message
-        run: echo 'All done!'
+      - name: Initialize Git user
+        run: |
+          git config --global user.email "wendel.luiz.profissional@gmail.com"
+          git config --global user.name "Release Workflow"
+      - name: Run Release
+        run: yarn release --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Success
+        run: echo 'Success!''
