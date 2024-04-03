@@ -17,4 +17,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Success
-        run: echo 'Success!''
+        run: echo 'Success!'
