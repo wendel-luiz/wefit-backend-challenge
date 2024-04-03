@@ -7,6 +7,6 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
       - name: Install the dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
       - name: End message
         run: echo 'All done!'
