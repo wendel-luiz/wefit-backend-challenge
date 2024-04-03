@@ -8,10 +8,7 @@ export async function migrateToLatest(): Promise<void> {
   const db = new Kysely<Database>({
     dialect: new MysqlDialect({
       pool: createPool({
-        database: process.env.MYSQLDB_DATABASE,
-        user: process.env.MYSQLDB_USER,
-        password: process.env.MYSQLDB_PASSWORD,
-        host: process.env.MYSQLDB_HOST,
+        uri: process.env.DATABASE_URL,
       }),
     }),
   })
